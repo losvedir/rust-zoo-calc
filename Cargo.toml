@@ -1,0 +1,4 @@
+[package]
+name = "rust-zoo-calc"
+version = "0.1.0"
+authors = ["Gabe Durazo <gabe@gabedurazo.com>"]
