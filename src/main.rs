@@ -23,6 +23,17 @@ impl fmt::Display for Expr {
     }
 }
 
+fn eval(expr: Expr) -> i64 {
+    match expr {
+        Expr::Numeral(i) => i,
+        Expr::Plus(i, j) => eval(*i) + eval(*j),
+        Expr::Minus(i, j) => eval(*i) - eval(*j),
+        Expr::Times(i, j) => eval(*i) * eval(*j),
+        Expr::Divide(i, j) => eval(*i) / eval(*j),
+        Expr::Negate(i) => eval(*i) * -1,
+    }
+}
+
 fn main() {
     let n1: Expr = Expr::Numeral(5);
     let p: Expr = Expr::Plus(Box::new(Expr::Numeral(5)), Box::new(Expr::Numeral(7)));
@@ -36,4 +47,6 @@ fn main() {
     println!("{}", t);
     println!("{}", d);
     println!("{}", n);
+
+    println!("{}", eval(p));
 }
