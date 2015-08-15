@@ -1,4 +1,6 @@
 use std::fmt;
+use std::io;
+use std::io::Write;
 
 #[derive(Debug)]
 enum Expr {
@@ -100,20 +102,17 @@ fn lex(line: &str) -> Vec<Tok> {
 }
 
 fn main() {
-    let n1: Expr = Expr::Numeral(5);
-    let p: Expr = Expr::Plus(Box::new(Expr::Numeral(5)), Box::new(Expr::Numeral(7)));
-    let m: Expr = Expr::Minus(Box::new(Expr::Numeral(5)), Box::new(Expr::Numeral(7)));
-    let t: Expr = Expr::Times(Box::new(Expr::Numeral(5)), Box::new(Expr::Numeral(7)));
-    let d: Expr = Expr::Divide(Box::new(Expr::Numeral(5)), Box::new(Expr::Numeral(7)));
-    let n: Expr = Expr::Negate(Box::new(Expr::Numeral(5)));
-    println!("{}", n1);
-    println!("{}", p);
-    println!("{}", m);
-    println!("{}", t);
-    println!("{}", d);
-    println!("{}", n);
-
-    println!("{}", eval(p));
-
-    println!("{:?}", lex("(1+2) * (5/4)"));
+    println!("Welcome to calc!");
+    loop {
+        print!("     > ");
+        if let Err(x) = io::stdout().flush() {
+            println!("could not flush: {}", x);
+        }
+        let mut input = String::new();
+        io::stdin().read_line(&mut input)
+            .ok()
+            .expect("Could not read line.");
+        let lexed = lex(&input);
+        println!("{:?}", lexed);
+    }
 }
