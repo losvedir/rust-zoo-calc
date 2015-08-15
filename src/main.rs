@@ -10,6 +10,17 @@ enum Expr {
     Negate(Box<Expr>),
 }
 
+#[derive(Debug)]
+enum Tok {
+    Numeral(i64),
+    Plus,
+    Minus,
+    Times,
+    Divide,
+    Lparen,
+    Rparen
+}
+
 impl fmt::Display for Expr {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
@@ -34,6 +45,60 @@ fn eval(expr: Expr) -> i64 {
     }
 }
 
+fn char_is_digit(c: &char) -> bool {
+    *c == '0' || *c == '1' || *c == '2' || *c == '3' || *c == '4' || *c == '5' || *c == '6' || *c == '7' || *c == '8' || *c == '9'
+}
+
+fn lex(line: &str) -> Vec<Tok> {
+    let mut toks = vec![];
+    let mut iter = line.chars().peekable();
+
+    while let Some(c) = iter.next() {
+        if c == ' ' {
+            // do nothing
+        } else if c == '+' {
+            toks.push(Tok::Plus);
+        } else if c == '-' {
+            toks.push(Tok::Minus);
+        } else if c == '*' {
+            toks.push(Tok::Times);
+        } else if c == '/' {
+            toks.push(Tok::Divide);
+        } else if c == '(' {
+            toks.push(Tok::Lparen);
+        } else if c == ')' {
+            toks.push(Tok::Rparen);
+        } else if char_is_digit(&c) {
+            let mut ingesting_numeral = true;
+            let mut numeral: Vec<char> = vec![];
+            numeral.push(c);
+
+            while ingesting_numeral {
+                if let Some(c_digit) = iter.peek() {
+                    if char_is_digit(c_digit) {
+                        numeral.push(*c_digit);
+                    } else {
+                        ingesting_numeral = false;
+                    }
+                } else {
+                    ingesting_numeral = false;
+                }
+
+                if ingesting_numeral {
+                    iter.next();
+                }
+            }
+
+            let n: String = numeral.iter().cloned().collect();
+            if let Ok(i) = n.parse::<i64>() {
+                toks.push(Tok::Numeral(i));
+            }
+        }
+    }
+
+    toks
+}
+
 fn main() {
     let n1: Expr = Expr::Numeral(5);
     let p: Expr = Expr::Plus(Box::new(Expr::Numeral(5)), Box::new(Expr::Numeral(7)));
@@ -49,4 +114,6 @@ fn main() {
     println!("{}", n);
 
     println!("{}", eval(p));
+
+    println!("{:?}", lex("(1+2) * (5/4)"));
 }
