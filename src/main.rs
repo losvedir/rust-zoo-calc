@@ -248,7 +248,6 @@ fn main() {
         let lexed = lex(&input);
         match parse(&lexed) {
             Ok(parsed) => {
-                println!("{:?}", parsed);
                 println!("{}", eval(parsed));
             },
             Err(msg) => {
